@@ -3,6 +3,7 @@ package ma.uir.itgirlsbackend.config;
 import ma.uir.itgirlsbackend.security.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,11 +30,29 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> {}) // utilise CorsConfig
+                .cors(cors -> {}) // ✅ utilise CorsConfig.corsConfigurationSource()
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+
+                        // ✅ IMPORTANT: autoriser preflight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // Public
                         .requestMatchers("/api/auth/**", "/api/public/**").permitAll()
+
+                        // Admin
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // Expert / Mentor
                         .requestMatchers("/api/expert/**").hasAnyRole("EXPERT", "ADMIN")
+                        .requestMatchers("/api/mentor/**").hasAnyRole("EXPERT", "ADMIN")
+
+                        // Girl
+                        .requestMatchers("/api/girl/**").hasAnyRole("GIRL", "ADMIN")
+
+                        // Messaging
+                        .requestMatchers("/api/messaging/**").authenticated()
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

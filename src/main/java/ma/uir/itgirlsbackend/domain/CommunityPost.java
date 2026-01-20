@@ -15,5 +15,9 @@ public class CommunityPost {
     @Column(name = "author_name")
     private String authorName;
 
-    private String imageUrl; // URL ou chemin
+    private String imageUrl;
+
+    @Column(name = "author_user_id")
+    private Long authorUserId;
+
 }

@@ -29,5 +29,9 @@ public class MentoringReservation {
     private MentoringStatus status;
 
     @Column(nullable = false)
-    private Long mentorUserId; // id user (expert mentor)
+    private Long mentorUserId;
+
+    @Column(name = "student_user_id")
+    private Long studentUserId;
+
 }

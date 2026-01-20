@@ -25,4 +25,7 @@ public class BlogPost {
 
     @Column(name = "author_name")
     private String authorName;
+
+    @Column(name = "author_user_id")
+    private Long authorUserId;
 }
